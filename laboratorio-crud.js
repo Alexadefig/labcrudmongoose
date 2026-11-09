@@ -6,11 +6,11 @@ import dotenv from "dotenv";
 import Ticket from "./models/Tickets.js";
 
 dotenv.config();
-console.log("Hola bruno");
-
+console.log("Hola Fatima");
 async function ejecutarCicloCrud() {
-  console.log("Encuentrame bruno");
+  console.log("Encuentrame Fatima dentro de la funcion");
   try {
+    console.log("Entre en el try");
     // MONGODB_URI se lee desde el archivo del entorno .env.
     await mongoose.connect(process.env.MONGODB_URI);
     console.log("Conectado a MongoDB Atlas\n");
@@ -92,4 +92,4 @@ async function ejecutarCicloCrud() {
 }
 
 ejecutarCicloCrud();
-console.log("Chao bruno");
+console.log("Chao Fatima");
