@@ -25,7 +25,7 @@ const ticketSchema = new mongoose.Schema(
       type: String,
       required: true,
       enum: {
-        values: ["Baja", "Media", "Alta", "critica"],
+        values: ["Baja", "Media", "Alta", "Crítica"],
         message: "{VALUE} no es una priridad valida",
       },
       default: "Media",
