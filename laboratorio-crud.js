@@ -6,9 +6,8 @@ import dotenv from "dotenv";
 import Ticket from "./models/Tickets.js";
 
 dotenv.config();
-console.log("Hola Fatima");
+
 async function ejecutarCicloCrud() {
-  console.log("Encuentrame Fatima dentro de la funcion");
   try {
     console.log("Entre en el try");
     // MONGODB_URI se lee desde el archivo del entorno .env.
@@ -92,4 +91,3 @@ async function ejecutarCicloCrud() {
 }
 
 ejecutarCicloCrud();
-console.log("Chao Fatima");

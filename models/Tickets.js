@@ -1,4 +1,5 @@
-import mongoose, { mongo } from "mongoose";
+// Importamos mongoose para su utlizacion
+import mongoose from "mongoose";
 
 const ticketSchema = new mongoose.Schema(
   {
