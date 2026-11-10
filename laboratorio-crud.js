@@ -95,10 +95,17 @@ async function ejecutarCicloCrud() {
     // console.log("\nB) Baja o con <= 2 horas:", bajaOConPocasHoras);
     // console.log("Total de resultados B:", bajaOConPocasHoras.length);
 
-    const urgentesOComplejos = await Ticket.find({
-      $or: [{ prioridad: "Crítica" }, { horasInvertidas: { $gt: 4 } }],
-    }).select("codigo titulo prioridad horasInvertidas -_id");
-    console.log("A) Criticos ó con > 4 horas ($or):", urgentesOComplejos);
+    // const urgentesOComplejos = await Ticket.find({
+    //   $or: [{ prioridad: "Crítica" }, { horasInvertidas: { $gt: 4 } }],
+    // }).select("codigo titulo prioridad horasInvertidas -_id");
+    // console.log("A) Criticos ó con > 4 horas ($or):", urgentesOComplejos);
+
+    // CONSULTA ALEXANDRA
+    const ticketsActivos = await Ticket.find({
+      estado: { $in: ["Abierto", "En Progreso"] },
+    }).select("codigo titulo estado prioridad -_id");
+    console.log("A) Tickets abiertos o en progreso ($in):", ticketsActivos);
+    console.log("Total de resultados:", ticketsActivos.length);
   } catch (error) {
     // Si alguna operacion falla en el try, el flujo salta hacia aqui, el error se informa
     console.error("Error en el lab:", error.message);
