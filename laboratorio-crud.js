@@ -175,12 +175,21 @@ async function ejecutarCicloCrud() {
     //   etiquetas: ticketActualizado.etiquetas,
     // });
 
-    const resultadoMasivo = await Ticket.updateMany(
-      { agenteAsignado: { $exists: false } },
-      { $set: { agenteAsignado: "Guardia Nivel 1" } },
+    // const resultadoMasivo = await Ticket.updateMany(
+    //   { agenteAsignado: { $exists: false } },
+    //   { $set: { agenteAsignado: "Guardia Nivel 1" } },
+    // );
+    // console.log(
+    //   `Actualizacion masiva completada: ${resultadoMasivo.modifiedCount} tickets asignados a Guardia Nivel 1`,
+    // );
+
+    const resultadosMasivo = await Ticket.updateMany(
+      { estado: "Abierto" },
+      { $set: { prioridad: "Alta" } },
     );
+
     console.log(
-      `Actualizacion masiva completada: ${resultadoMasivo.modifiedCount} tickets asignados a Guardia Nivel 1`,
+      `Actualización masiva completada: ${resultadosMasivo.modifiedCount} tickets actualizados a prioridad Alta.`,
     );
   } catch (error) {
     // Si alguna operacion falla en el try, el flujo salta hacia aqui, el error se informa
