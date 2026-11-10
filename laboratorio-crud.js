@@ -77,35 +77,111 @@ async function ejecutarCicloCrud() {
     // el signo delante de _id excluye ese campo
     // Los resultados se guardan en una variable que podemos inspeccionar despues.
     // find devuelve una lista, incluso cuando hay una sola coincidencia.
+    const urgentesOComplejos = await Ticket.find({
+      $or: [{ prioridad: "Crítica" }, { horasInvertidas: { $gt: 4 } }],
+    }).select("codigo titulo prioridad horasInvertidas -_id");
+    console.log("A) Criticos ó con > 4 horas ($or):", urgentesOComplejos);
 
-    // CONSULTA BRUNO
-    // const altaOCantidadDeHoras = await Ticket.find({
-    //   $or: [{ prioridad: "Alta" }, { horasInvertidas: { $gt: 3 } }],
-    // }).select("codigo titulo prioridad horasInvertidas -_id");
-    // console.log(
-    //   "\nB) Tickets con prioridad alta o más de 3 horas:",
-    //   altaOCantidadDeHoras,
+    // Exists false busca documentos donde la propiedad no existe
+    // No equivale necesariamente a buscar una propiedad guardada con null
+    const sinAgente = await Ticket.find({
+      agenteAsignado: { $exists: false },
+    }).select("codigo titulo prioridad horasInvertidas -_id");
+    console.log("Tickets sin agente asignado ($exists: false):", sinAgente);
+
+    // $all exige que el array etiquetas contenga los dos valores indicados
+    const backendProd = await Ticket.find({
+      etiquetas: { $all: ["backend", "produccion"] },
+    }).select("codigo etiquetas -_id");
+    console.log("\n Tickets con tags backend y produccion ($all)", backendProd);
+
+    const ticketsPorTitulo = await Ticket.find({
+      titulo: { $regex: "Pasarela", $options: "i" },
+    }).select("codigo titulo prioridad estado -_id");
+
+    console.log(
+      "Tickets cuyo titulo contiene 'Pasarela' ($regex):",
+      ticketsPorTitulo,
+    );
+
+    // 3. UPDATE (ACTUALIZACION INDIVIDUAL, ATOMICA Y MASIVA)
+
+    // findOneAndUpdate localizar un ticket y lo modificaremos en una sola opcion
+    // $set reemplaza valores concretos
+    // $inc incremente o suma al numero existente
+    // $push añade un elemento al array
+    // const ticketActualizado = await Ticket.findOneAndUpdate(
+    //   { codigo: "BUG-101" },
+    //   {
+    //     $set: { agenteAsignado: "Bruno", estado: "En Progreso" },
+    //     $inc: { horasInvertidas: 3 },
+    //     $push: { etiquetas: "parche-urgente" },
+    //   },
+    //   { new: true, runValidators: true },
+    //   // Devuelve el nuevo y ejecuta validadores del Schema
     // );
-    // console.log("Total de tickets encontrados:", altaOCantidadDeHoras.length);
+    // console.log("A) BUG-101 actualizado:", {
+    //   codigo: ticketActualizado.codigo,
+    //   agente: ticketActualizado.agenteAsignado,
+    //   estado: ticketActualizado.estado,
+    //   horas: ticketActualizado.horasInvertidas,
+    //   etiquetas: ticketActualizado.etiquetas,
+    // });
+    // const ticketUpdate = await Ticket.findOneAndUpdate(
+    //   { codigo: "BUG-103" },
+    //   {
+    //     $set: { prioridad: "Baja", estado: "Resuelto" },
+    //     $inc: { horasInvertidas: 1 },
+    //     $pull: { etiquetas: "backend" },
+    //   },
+    //   { returnDocument: "after", runValidators: true },
+    // );
+    // console.log("BUG-103 actualizado:", {
+    //   prioridad: ticketUpdate.prioridad,
+    //   estado: ticketUpdate.estado,
+    //   horas: ticketUpdate.horasInvertidas,
+    //   etiquetas: ticketUpdate.etiquetas,
+    // });
 
-    // CONSULTA DE ANGEL
-    // const bajaOConPocasHoras = await Ticket.find({
-    //   $or: [{ prioridad: "Baja" }, { horasInvertidas: { $lte: 2 } }],
-    // }).select("codigo titulo prioridad horasInvertidas -_id");
-    // console.log("\nB) Baja o con <= 2 horas:", bajaOConPocasHoras);
-    // console.log("Total de resultados B:", bajaOConPocasHoras.length);
+    // const segundoTicketActualizado = await Ticket.findOneAndUpdate(
+    //   { codigo: "BUG-102" },
+    //   {
+    //     $set: { agenteAsignado: "Lucía", estado: "Resuelto" },
+    //     $inc: { horasInvertidas: 1 },
+    //     $push: { etiquetas: "ajuste-movil" },
+    //   },
+    //   { new: true, runValidators: true },
+    // );
+    // console.log("B) BUG-102 actualizado:", {
+    //   codigo: segundoTicketActualizado.codigo,
+    //   agente: segundoTicketActualizado.agenteAsignado,
+    //   estado: segundoTicketActualizado.estado,
+    //   horas: segundoTicketActualizado.horasInvertidas,
+    //   etiquetas: segundoTicketActualizado.etiquetas,
+    // });
+    // const ticketActualizado = await Ticket.findOneAndUpdate(
+    //   { codigo: "BUG-105" },
+    //   {
+    //     $set: { estado: "Resuelto" },
+    //     $inc: { horasInvertidas: 1.5 },
+    //     $push: { etiquetas: "ui" },
+    //   },
+    //   { new: true, runValidators: true },
+    // );
 
-    // const urgentesOComplejos = await Ticket.find({
-    //   $or: [{ prioridad: "Crítica" }, { horasInvertidas: { $gt: 4 } }],
-    // }).select("codigo titulo prioridad horasInvertidas -_id");
-    // console.log("A) Criticos ó con > 4 horas ($or):", urgentesOComplejos);
+    // console.log("\nBUG-105 actualizado:", {
+    //   estado: ticketActualizado.estado,
+    //   horas: ticketActualizado.horasInvertidas,
+    //   etiquetas: ticketActualizado.etiquetas,
+    // });
 
-    // CONSULTA ALEXANDRA
-    const ticketsActivos = await Ticket.find({
-      estado: { $in: ["Abierto", "En Progreso"] },
-    }).select("codigo titulo estado prioridad -_id");
-    console.log("A) Tickets abiertos o en progreso ($in):", ticketsActivos);
-    console.log("Total de resultados:", ticketsActivos.length);
+    const resultadoMasivo = await Ticket.updateMany(
+      { agenteAsignado: { $exists: false } },
+      { $set: { agenteAsignado: "Guardia Nivel 1" } },
+    );
+    console.log(
+      `Actualizacion masiva completada: ${resultadoMasivo.modifiedCount} tickets asignados a Guardia Nivel 1`,
+    );
   } catch (error) {
     // Si alguna operacion falla en el try, el flujo salta hacia aqui, el error se informa
     console.error("Error en el lab:", error.message);
