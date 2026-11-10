@@ -77,15 +77,28 @@ async function ejecutarCicloCrud() {
     // el signo delante de _id excluye ese campo
     // Los resultados se guardan en una variable que podemos inspeccionar despues.
     // find devuelve una lista, incluso cuando hay una sola coincidencia.
-    const urgentesOComplejos = await Ticket.find({
-      $or: [{ prioridad: "Crítica" }, { horasInvertidas: { $gt: 4 } }],
-    }).select("codigo titulo prioridad horasInvertidas -_id");
-    console.log("A) Criticos ó con > 4 horas ($or):", urgentesOComplejos);
+
+    // CONSULTA BRUNO
+    // const altaOCantidadDeHoras = await Ticket.find({
+    //   $or: [{ prioridad: "Alta" }, { horasInvertidas: { $gt: 3 } }],
+    // }).select("codigo titulo prioridad horasInvertidas -_id");
+    // console.log(
+    //   "\nB) Tickets con prioridad alta o más de 3 horas:",
+    //   altaOCantidadDeHoras,
+    // );
+    // console.log("Total de tickets encontrados:", altaOCantidadDeHoras.length);
+
+    // CONSULTA DE ANGEL
     // const bajaOConPocasHoras = await Ticket.find({
     //   $or: [{ prioridad: "Baja" }, { horasInvertidas: { $lte: 2 } }],
     // }).select("codigo titulo prioridad horasInvertidas -_id");
     // console.log("\nB) Baja o con <= 2 horas:", bajaOConPocasHoras);
     // console.log("Total de resultados B:", bajaOConPocasHoras.length);
+
+    const urgentesOComplejos = await Ticket.find({
+      $or: [{ prioridad: "Crítica" }, { horasInvertidas: { $gt: 4 } }],
+    }).select("codigo titulo prioridad horasInvertidas -_id");
+    console.log("A) Criticos ó con > 4 horas ($or):", urgentesOComplejos);
   } catch (error) {
     // Si alguna operacion falla en el try, el flujo salta hacia aqui, el error se informa
     console.error("Error en el lab:", error.message);
